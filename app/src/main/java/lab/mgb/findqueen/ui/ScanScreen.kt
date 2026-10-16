@@ -7,15 +7,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -99,6 +104,8 @@ fun ScanScreen() {
     var running by remember { mutableStateOf(false) }
     var latest by remember { mutableStateOf<LiveResult?>(null) }
     var debugSession by remember { mutableStateOf<DebugSession?>(null) }
+    // Debug logging is opt-in (checkbox under Start) and remembered between app starts.
+    var debugEnabled by remember { mutableStateOf(DebugLog.isEnabled(context)) }
 
     // ToneGenerator can fail on some devices; then live mode just runs without sound.
     val tone = remember { runCatching { ToneGenerator(AudioManager.STREAM_MUSIC, BEEP_VOLUME) }.getOrNull() }
@@ -119,9 +126,11 @@ fun ScanScreen() {
         }
     }
 
-    // Every Start..Stop run is logged to logcat (tag FindQueen) and the app's debug folder;
-    // debug/collect_logs.sh (not in git) picks both up over adb.
+    // With Debug checked, every Start..Stop run is logged to logcat (tag FindQueen) and the
+    // app's debug folder; debug/collect_logs.sh (not in git) picks both up over adb.
+    // Unchecked: nothing is logged.
     fun startDebugSession() {
+        if (!debugEnabled) return
         debugSession = DebugLog.startSession(
             context,
             mapOf(
@@ -211,7 +220,36 @@ fun ScanScreen() {
                 },
                 modifier = Modifier.fillMaxWidth().height(64.dp),
             ) {
-                Text(if (running) "Stop" else "Start (debug)", style = MaterialTheme.typography.titleLarge)
+                Text(if (running) "Stop" else "Start", style = MaterialTheme.typography.titleLarge)
+            }
+            // Changing it takes effect at the next Start, so it is locked while running.
+            Row(
+                Modifier.toggleable(
+                    value = debugEnabled,
+                    enabled = !running,
+                    role = Role.Checkbox,
+                    onValueChange = {
+                        debugEnabled = it
+                        DebugLog.setEnabled(context, it)
+                    },
+                ).padding(end = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(
+                    checked = debugEnabled,
+                    onCheckedChange = null,
+                    enabled = !running,
+                    colors = CheckboxDefaults.colors(
+                        uncheckedColor = Color.LightGray,
+                        disabledCheckedColor = Color.Gray,
+                        disabledUncheckedColor = Color.DarkGray,
+                    ),
+                )
+                Text(
+                    "Debug",
+                    color = if (running) Color.Gray else Color.White,
+                    style = MaterialTheme.typography.titleMedium,
+                )
             }
         }
     }

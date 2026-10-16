@@ -94,6 +94,10 @@ The user tests the APK on the phone away from this server (no USB/adb here). A
 script on the user's other computer (written by another Claude) collects logs
 over adb and ships them to `debug/find-queen-logs/` here (git-ignored). The laptop scripts
 `collect_logs.sh` / `install_apk.sh` live only in `debug/`, never commit them.
+Logging is **opt-in** (user decision 2026-10-16): a **Debug** checkbox under
+Start/Stop (off by default, remembered in SharedPreferences, locked while
+running). Unchecked, nothing below is written: no logcat lines, no files, no
+crash file. The user must tick Debug before a test run whose logs are wanted.
 - **Logcat (stdout), tag `FindQueen`** (`debug/DebugLog.kt`): `SESSION,<id>,k=v`
   (phone, Android, app version, thresholds), `HEADER,<id>,<csv header>`,
   `FRAME,<id>,<DebugRecord csv>` (~20/s: time, fps, brightness, sharpness,

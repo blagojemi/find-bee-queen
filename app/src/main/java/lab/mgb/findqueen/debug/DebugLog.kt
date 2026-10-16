@@ -112,6 +112,16 @@ object DebugLog {
     /** Logcat tag; collect with `adb logcat -s FindQueen:I`. */
     const val TAG = "FindQueen"
     private const val KEEP_SESSIONS = 5
+    private const val PREFS = "settings"
+    private const val KEY_ENABLED = "debug_logs"
+
+    /** Whether the user ticked Debug; off by default, then nothing is logged or saved. */
+    fun isEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_ENABLED, false)
+
+    fun setEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_ENABLED, enabled).apply()
+    }
     private val stamp get() = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
 
     internal fun out(line: String) {
@@ -141,12 +151,15 @@ object DebugLog {
         return DebugSession(id, dir)
     }
 
-    /** Logs uncaught exceptions (logcat + debug/crash_<time>.txt), then lets Android handle them as usual. */
+    /**
+     * Logs uncaught exceptions (logcat + debug/crash_<time>.txt) when Debug is ticked, then lets
+     * Android handle them as usual.
+     */
     fun installCrashHandler(context: Context) {
         val app = context.applicationContext
         val previous = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, error ->
-            runCatching {
+            if (isEnabled(app)) runCatching {
                 val trace = error.stackTraceToString()
                 Log.e(TAG, "CRASH,thread=${thread.name},app=${appVersion(app)}\n$trace")
                 File(root(app), "crash_$stamp.txt").writeText(
