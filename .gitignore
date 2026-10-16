@@ -1,0 +1,20 @@
+# Gradle / Android build
+.gradle/
+.kotlin/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Data and outputs kept only on this server
+debug_logs/
+test_videos/
+tools/bee_check/.venv/
+tools/bee_check/samples/
+tools/bee_check/out/
+tools/bee_check/out_video/
+tools/bee_check/*.log
+__pycache__/

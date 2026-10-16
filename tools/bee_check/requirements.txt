@@ -1,0 +1,1 @@
+mediapipe-model-maker==0.2.1.4

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder launcher icon: amber hexagon (honeycomb cell). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M24,3 L42,13.5 L42,34.5 L24,45 L6,34.5 L6,13.5 Z" />
+    <path
+        android:fillColor="#3E2723"
+        android:pathData="M24,14 L33,19 L33,29 L24,34 L15,29 L15,19 Z" />
+</vector>
