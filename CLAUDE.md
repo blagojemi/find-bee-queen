@@ -92,7 +92,8 @@ To do when optimising:
 ## Debug logs from the phone
 The user tests the APK on the phone away from this server (no USB/adb here). A
 script on the user's other computer (written by another Claude) collects logs
-over adb and ships them to `debug_logs/` here (git-ignored).
+over adb and ships them to `debug/find-queen-logs/` here (git-ignored). The laptop scripts
+`collect_logs.sh` / `install_apk.sh` live only in `debug/see-queen-apk/`, never commit them.
 - **Logcat (stdout), tag `FindQueen`** (`debug/DebugLog.kt`): `SESSION,<id>,k=v`
   (phone, Android, app version, thresholds), `HEADER,<id>,<csv header>`,
   `FRAME,<id>,<DebugRecord csv>` (~20/s: time, fps, brightness, sharpness,

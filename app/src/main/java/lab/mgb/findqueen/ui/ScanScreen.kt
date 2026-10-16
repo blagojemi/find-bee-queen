@@ -120,7 +120,7 @@ fun ScanScreen() {
     }
 
     // Every Start..Stop run is logged to logcat (tag FindQueen) and the app's debug folder;
-    // tools/phone_logs/collect_logs.sh picks both up over adb.
+    // debug/see-queen-apk/collect_logs.sh (not in git) picks both up over adb.
     fun startDebugSession() {
         debugSession = DebugLog.startSession(
             context,
