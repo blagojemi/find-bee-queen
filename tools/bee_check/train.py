@@ -4,7 +4,7 @@ Reads labelled photos from <samples>/bees and <samples>/no_bees (folder name = l
 trains a small on-device classifier and writes bee_check.tflite (with metadata) to
 <out>. Copy that file to app/src/main/assets/.
 
-    python train.py --samples samples --out out
+    python train.py --out out
 """
 
 import argparse
@@ -27,7 +27,7 @@ def count_images(folder: Path) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--samples", type=Path, default=Path("samples"))
+    parser.add_argument("--samples", type=Path, default=Path(__file__).resolve().parents[2] / "debug" / "pre-check-samples")
     parser.add_argument("--out", type=Path, default=Path("out"))
     parser.add_argument("--model", choices=MODELS, default="mobilenet_v2")
     parser.add_argument("--epochs", type=int, default=15)

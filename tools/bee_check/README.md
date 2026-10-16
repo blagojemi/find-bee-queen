@@ -7,12 +7,12 @@ barely touches the battery. It is only as reliable as the photos it learns from.
 
 ## 1. Collect samples
 Take photos with any camera (your phone's normal camera app is fine) and sort
-them into the two folders here:
+them into the two folders (git-ignored):
 
-    tools/bee_check/samples/bees/
-    tools/bee_check/samples/no_bees/
+    debug/pre-check-samples/bees/
+    debug/pre-check-samples/no_bees/
 
-Keep `samples/bee_dataset_log.csv` up to date for photos from the web
+Keep `debug/pre-check-samples/bee_dataset_log.csv` up to date for photos from the web
 (source URL, author, licence).
 
 ### What to photograph
@@ -51,7 +51,7 @@ Needs Python 3.9–3.11.
 cd tools/bee_check
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
-python train.py --samples samples --out out             # MobileNetV2, smallest/fastest
+python train.py --out out             # MobileNetV2, smallest/fastest
 python train.py --model efficientnet_lite0 ...          # a bit bigger, often more accurate
 cp out/bee_check.tflite ../../app/src/main/assets/
 ```

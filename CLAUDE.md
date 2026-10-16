@@ -35,7 +35,7 @@ Pressing Start runs a staged pipeline on a single frame:
    (~23 ms on the N10). For reliability it answers BEES / NO_BEES /
    UNSURE: a borderline score asks the user to try another angle rather than
    guess. Model: `assets/bee_check.tflite`, labels `bees` / `no_bees`, trained
-   from photos the user puts in `tools/bee_check/samples/<label>/` (the app does
+   from photos the user puts in `debug/pre-check-samples/<label>/` (the app does
    not save training photos; that was removed on purpose), see
    `tools/bee_check/README.md`.
    A photo cannot reliably identify the subspecies, so this check means
@@ -93,7 +93,7 @@ To do when optimising:
 The user tests the APK on the phone away from this server (no USB/adb here). A
 script on the user's other computer (written by another Claude) collects logs
 over adb and ships them to `debug/find-queen-logs/` here (git-ignored). The laptop scripts
-`collect_logs.sh` / `install_apk.sh` live only in `debug/see-queen-apk/`, never commit them.
+`collect_logs.sh` / `install_apk.sh` live only in `debug/`, never commit them.
 - **Logcat (stdout), tag `FindQueen`** (`debug/DebugLog.kt`): `SESSION,<id>,k=v`
   (phone, Android, app version, thresholds), `HEADER,<id>,<csv header>`,
   `FRAME,<id>,<DebugRecord csv>` (~20/s: time, fps, brightness, sharpness,
