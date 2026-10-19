@@ -17,5 +17,15 @@ tools/bee_check/samples/
 tools/bee_check/out/
 tools/bee_check/out_video/
 tools/bee_check/*.log
+tools/queen_detector/.venv/
+tools/queen_detector/.venv-k80/
+tools/queen_detector/.venv-export/
+tools/queen_detector/queen_data/
+tools/queen_detector/*.log
+tools/queen_detector/runs/
+tools/queen_detector/out_video/
+tools/queen_detector/*.pt
 __pycache__/
 debug/*
+/runs/
+/weights/

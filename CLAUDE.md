@@ -62,9 +62,9 @@ Emulator test with video: `emulator -avd seequeen_api35 -camera-back
 videofile:<h264.mp4>` (the clip loops; `test_videos/clip_test.mp4` is a 43 s cut
 of the inspection video).
 
-Later, the same pipeline can run continuously on preview frames (live mode),
-built on `camera/QueenAnalyzer`. Each stage shows its status (✓ / … / ✗) in the
-report panel (`ui/ScanScreen.kt`).
+When step 3 is built, it plugs into this live loop after the bee check
+(`camera/QueenAnalyzer.kt` is the stub for it). Each stage shows its status
+(✓ / … / ✗) in the report panel (`ui/ScanScreen.kt`).
 
 ## Target device: optimise for a mid-range phone
 Reference phone is the user's **OnePlus Nord N10 5G**: Snapdragon 690
@@ -142,6 +142,12 @@ crash file. The user must tick Debug before a test run whose logs are wanted.
   coordinate mapping), `ui/` (screens, overlay). See README.md.
 
 ## The model
+**Status 2026-10-19:** first queen detector v1 (YOLOv8n, 416 px, `tools/queen_detector/`,
+web data from Roboflow, see its README). On unseen web close-ups: queen recall 0.81,
+precision 0.81. On the 12-min inspection video: 0 real queens, 4 false boxes at 640 px.
+Cause: web queens fill ~26% of the photo, in the app ~4–5% (20–30 px). Next: the user's
+own N10 inspection frames, labelled locally, 640 px retrain; validate on own frames only.
+
 The model is the hard part and is not in the repo yet. It has to be trained on
 labelled photos of hive frames (Roboflow / CVAT for labelling; MediaPipe Model
 Maker or YOLO → TFLite with metadata for training/export). Queens are small and
@@ -149,6 +155,9 @@ surrounded by look-alike workers, so favour higher input resolution and recall
 over speed when choosing a model.
 
 ## Working on this repo
+- Git identity: commit only as `blagojemi <milicevic.blagoje@gmail.com>`
+  (personal account, remote `github.com/blagojemi/find-bee-queen`). No work /
+  company emails or names in commits or source.
 - Build: `./gradlew assembleDebug`; tests: `./gradlew test`;
   install: `./gradlew installDebug`.
 - Every emulator test also builds the debug APK
