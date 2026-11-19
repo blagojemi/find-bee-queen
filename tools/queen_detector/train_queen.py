@@ -5,6 +5,8 @@ Run on the RTX A4000 (GPU 2 in nvidia-smi order):
         .venv/bin/python train_queen.py --name v1_416
 """
 import argparse
+import os
+import subprocess
 from pathlib import Path
 
 from ultralytics import YOLO, settings
@@ -37,9 +39,28 @@ def main():
     best = Path(model.trainer.save_dir) / "weights" / "best.pt"
     trained = YOLO(best)
     print(trained.val(data=args.data, imgsz=args.imgsz, split="test", device=0))
-    # float16 and int8 TFLite for the phone; int8 calibrates on the train images.
-    trained.export(format="tflite", imgsz=args.imgsz, half=True)
-    trained.export(format="tflite", imgsz=args.imgsz, int8=True, data=args.data)
+    export_tflite(best, args.imgsz, args.data)
+
+
+def export_tflite(best: Path, imgsz: int, data: str):
+    """float32 and int8 TFLite next to best.pt.
+
+    Ultralytics' LiteRT export needs a newer PyTorch than the CUDA 11.8 build
+    used for training, so it runs in the CPU-only .venv-export (see README).
+    int8 calibrates on the train images.
+    """
+    python = Path(__file__).resolve().parent / ".venv-export" / "bin" / "python"
+    if not python.exists():
+        print(f"No {python}; skipping TFLite export (see README, 'Export to TFLite').")
+        return
+    code = (
+        "import sys; from ultralytics import YOLO, settings; settings.update({'sync': False})\n"
+        "best, imgsz, data = sys.argv[1], int(sys.argv[2]), sys.argv[3]\n"
+        "YOLO(best).export(format='tflite', imgsz=imgsz, device='cpu')\n"
+        "YOLO(best).export(format='tflite', imgsz=imgsz, device='cpu', quantize=8, data=data)\n"
+    )
+    env = {**os.environ, "CUDA_VISIBLE_DEVICES": ""}
+    subprocess.run([str(python), "-c", code, str(best), str(imgsz), data], check=True, env=env)
 
 
 if __name__ == "__main__":
